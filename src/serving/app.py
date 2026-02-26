@@ -12,6 +12,7 @@ import numpy as np
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+from src.monitoring.metrics import get_metrics, record_error, record_prediction
 from src.utils.config import load_config
 from src.utils.logger import get_logger
 
@@ -149,9 +150,21 @@ async def predict(request: PredictRequest) -> PredictResponse:
 
     except Exception as e:
         logger.error("Prediction failed: %s", e)
+        record_error(
+            model_state.model_name,
+            model_state.model_version,
+            type(e).__name__,
+        )
         raise HTTPException(status_code=400, detail=f"Prediction failed: {e}")
 
-    latency_ms = (time.time() - start_time) * 1000
+    latency_seconds = time.time() - start_time
+    latency_ms = latency_seconds * 1000
+
+    record_prediction(
+        model_state.model_name,
+        model_state.model_version,
+        latency_seconds,
+    )
 
     config = load_config()
     if config["serving"].get("log_predictions", False):
@@ -181,6 +194,21 @@ async def health() -> HealthResponse:
         model_name=model_state.model_name,
         model_version=model_state.model_version,
         model_loaded=model_state.loaded,
+    )
+
+
+@app.get("/metrics")
+async def metrics() -> bytes:
+    """Return Prometheus-formatted metrics.
+
+    Returns:
+        Raw bytes in Prometheus exposition format.
+    """
+    from fastapi.responses import Response
+
+    return Response(
+        content=get_metrics(),
+        media_type="text/plain; version=0.0.4; charset=utf-8",
     )
 
 
