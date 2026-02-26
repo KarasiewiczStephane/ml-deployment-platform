@@ -1,0 +1,59 @@
+# ML Deployment Platform Configuration
+
+mlflow:
+  tracking_uri: "sqlite:///mlflow.db"
+  artifact_root: "./mlruns"
+  experiment_name: "ml-deployment-platform"
+  registry_uri: "sqlite:///mlflow.db"
+
+training:
+  dataset: "wine"  # "iris" or "wine"
+  test_size: 0.2
+  random_state: 42
+  models:
+    random_forest:
+      n_estimators: 100
+      max_depth: 10
+      min_samples_split: 2
+    xgboost:
+      n_estimators: 100
+      max_depth: 6
+      learning_rate: 0.1
+
+serving:
+  host: "0.0.0.0"
+  port: 8000
+  model_name: "ml-deployment-model"
+  model_stage: "Production"
+  reload_interval_seconds: 60
+  log_predictions: true
+
+canary:
+  enabled: false
+  traffic_percentage: 10
+  promotion_step: 10
+  rollback_threshold: 0.05
+  min_requests_before_eval: 50
+
+monitoring:
+  prometheus:
+    port: 9090
+    scrape_interval: "15s"
+  grafana:
+    port: 3000
+  drift:
+    accuracy_threshold: 0.85
+    check_interval_seconds: 300
+    min_samples: 100
+    window_size: 500
+
+retraining:
+  auto_retrain: true
+  accuracy_drop_threshold: 0.05
+  min_samples_for_retrain: 200
+  max_retrain_frequency_seconds: 3600
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null
