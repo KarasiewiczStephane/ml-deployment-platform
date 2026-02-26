@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-serving-api
+  labels:
+    app: ml-serving-api
+    component: serving
+spec:
+  type: ClusterIP
+  selector:
+    app: ml-serving-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+      protocol: TCP
