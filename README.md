@@ -1,6 +1,6 @@
 # ML Model Deployment Platform
 
-A complete MLOps pipeline for experiment tracking, model registry, serving, canary deployments, and automated monitoring with retraining triggers.
+> Complete MLOps platform — experiment tracking, model registry, canary deployments, automated monitoring, and retraining triggers.
 
 ## Architecture
 
@@ -214,6 +214,11 @@ The Grafana dashboard (`monitoring/grafana/dashboards/model-performance.json`) p
 - **Request Volume** — predictions per second rate
 - **Error Rate** — prediction errors by type
 - **Summary Stats** — total predictions, errors, average latency
+
+
+## Author
+
+**Stéphane Karasiewicz** — [skarazdata.com](https://skarazdata.com) | [LinkedIn](https://www.linkedin.com/in/stephane-karasiewicz/)
 
 ## License
 
